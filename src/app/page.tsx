@@ -1,101 +1,94 @@
-import Image from "next/image";
+"use client";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import Head from 'next/head';
+
+import Upload from './components/upload';
+import DownloadButton from './components/save';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  interface File {
+    id: string;
+    filename: string;
+    url: string; // Assuming the API provides a URL for the file
+  }
+  
+  const [files, setFiles] = useState<File[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [, setError] = useState<string | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
-}
+  useEffect(() => {
+    fetchFiles();
+  }, []);
+
+  const fetchFiles = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('http://0.0.0.0:8000/api/files/');
+      // Make sure we're accessing the correct property based on the API response structure
+      setFiles(response.data.files || response.data);
+      setError(null);
+    } catch (err) {
+      setError('Failed to fetch files');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <Head>
+        <title>Dropbox Clone</title>
+        <meta name="description" content="A simple Dropbox clone" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <main className="container mx-auto py-8 px-4">
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">Your Files</h1>
+        <Upload/>
+        
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-xl font-semibold text-gray-800">All Files</h2>
+          </div>
+          
+          {loading ? (
+            <div className="p-6 text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+              <p className="mt-2 text-gray-600">Loading files...</p>
+            </div>
+          ) : files.length === 0 ? (
+            <div className="p-6 text-center text-gray-500">
+              No files uploaded yet
+            </div>
+          ) : (
+            <ul className="divide-y divide-gray-200">
+              {files.map((name, i) => (
+                <li 
+                  key={i} 
+                  className="px-6 py-4 hover:bg-gray-50 cursor-pointer transition-colors"
+                >
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-md flex items-center justify-center">
+                      <svg className="h-6 w-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                      </svg>
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <div className="text-sm font-medium text-gray-800 truncate">{name}</div>
+                      <div className="flex text-xs text-gray-500">
+                      </div>
+                    </div>
+                    <div>
+                    <DownloadButton fileName={name}/>
+                    </div>
+                  </div>
+                </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </main>
+      </div>
+  );}
