@@ -18,7 +18,8 @@ export default function Upload() {
             try {
                 await onSubmit(formData);
                 setSuccessMessage("File uploaded successfully!");
-            } catch (err) {
+                setUploadProgress(100);
+            } catch {
                 setError("Failed to upload file.");
             } finally {
                 setUploading(false);

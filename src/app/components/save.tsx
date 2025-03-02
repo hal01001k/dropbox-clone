@@ -26,7 +26,7 @@ export default function DownloadButton({ fileName }: { fileName: string }) {
       } else {
         setError(data.error || "Failed to generate download URL");
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred while downloading the file.");
     } finally {
       setLoading(false);

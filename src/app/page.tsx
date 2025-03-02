@@ -7,13 +7,7 @@ import Upload from './components/upload';
 import DownloadButton from './components/save';
 
 export default function Home() {
-  interface File {
-    id: string;
-    filename: string;
-    url: string; // Assuming the API provides a URL for the file
-  }
-  
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [, setError] = useState<string | null>(null);
 
@@ -25,8 +19,7 @@ export default function Home() {
     try {
       setLoading(true);
       const response = await axios.get('http://0.0.0.0:8000/api/files/');
-      // Make sure we're accessing the correct property based on the API response structure
-      setFiles(response.data.files || response.data);
+      setFiles(response.data.files); // Update this line to access the files property
       setError(null);
     } catch (err) {
       setError('Failed to fetch files');
@@ -64,7 +57,7 @@ export default function Home() {
             </div>
           ) : (
             <ul className="divide-y divide-gray-200">
-              {files.map((name, i) => (
+              {files.map((filename, i) => (
                 <li 
                   key={i} 
                   className="px-6 py-4 hover:bg-gray-50 cursor-pointer transition-colors"
@@ -76,12 +69,12 @@ export default function Home() {
                       </svg>
                     </div>
                     <div className="ml-4 flex-1">
-                      <div className="text-sm font-medium text-gray-800 truncate">{name}</div>
+                      <div className="text-sm font-medium text-gray-800 truncate">{filename}</div>
                       <div className="flex text-xs text-gray-500">
                       </div>
                     </div>
                     <div>
-                    <DownloadButton fileName={name}/>
+                    <DownloadButton fileName={filename}/>
                     </div>
                   </div>
                 </li>
@@ -91,4 +84,5 @@ export default function Home() {
           </div>
         </main>
       </div>
-  );}
+  );
+}
