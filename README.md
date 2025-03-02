@@ -1,8 +1,21 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# [Dropbox-Clone-App](https://dropbox-clone-git-main-rajmachawals-projects.vercel.app/)
 
-## Getting Started
+## Clone Dropbox App with backend deployed on keyopb and AWS S3 access
 
-First, run the development server:
+- [Clone-app-ui](https://dropbox-clone-git-main-rajmachawals-projects.vercel.app/)
+- [backend-app](https://glad-corrina-qpiai-7bb99841.koyeb.app/)
+
+
+### Description
+- A very simple app that mimics Dropbox functionality to files with limited size( free-tire cloud service).You upload any file and dwonload anytime anywhere. 
+- App is running with UI and backend on ccloud service with CORS handled and need functionality. 
+- Used SSR to make api calls and using presigned URLs to deploy to S3.
+
+## stack used
+- AWS S3, NEXT.js, FASTAPI, Docker, Git, Mino(local development), Keyob, boto3, AWS policy, Vercel.
+- Used provided ingress.
+
+- can locally run with commands
 
 ```bash
 npm run dev
@@ -14,23 +27,43 @@ pnpm dev
 bun dev
 ```
 
+### env file needed
+- .env file format 
+
+```
+S3_BUCKET=
+S3_ENDPOINT=
+S3_ACCESS_KEY=
+S3_SECRET_KEY=
+S3_REGION=
+NEXT_PUBLIC_BASE_URL=
+```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Front-end Deployed on Vercel
 
-## Learn More
+- [Clone-app](https://dropbox-clone-git-main-rajmachawals-projects.vercel.app/)
+- handled CORS with server
+- upload any file to the bucket (AWS S3)
+- Has a limit to file Size (as using free-tier)
 
-To learn more about Next.js, take a look at the following resources:
+## backend deployed on Koyeb
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [backend-app](https://glad-corrina-qpiai-7bb99841.koyeb.app/)
+- [Git-repo](https://github.com/hal01001k/dropbox-server)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### env file used in server
 
-## Deploy on Vercel
+```
+S3_BUCKET=
+S3_ENDPOINT=
+S3_ACCESS_KEY=
+S3_SECRET_KEY=
+S3_REGION=
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Simple FastAPI app with acces to AWS S3
+- used DockerFile to genrate docker
+- requires acces to AWS S3
