@@ -18,7 +18,9 @@ export default function Home() {
   const fetchFiles = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://0.0.0.0:8000/api/files/');
+      const response = await axios.get('/api/files/', {
+        baseURL: process.env.NEXT_PUBLIC_BASE_URL
+      });
       setFiles(response.data.files); // Update this line to access the files property
       setError(null);
     } catch (err) {
